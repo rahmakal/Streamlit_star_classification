@@ -2,11 +2,11 @@ import streamlit as st
 import pickle
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from collections import Counter
-with open(r'C:\Users\Rahma Kallel\Desktop\vscode\star_model.pkl','rb') as file:
+
+with open('star_model.pkl','rb') as file:
     model=pickle.load(file)
 
-data = pd.read_csv(r"C:\Users\Rahma Kallel\Desktop\vscode\stars.csv") 
+data = pd.read_csv("data\stars.csv") 
 categorical_columns = ['Color', 'Spectral_Class']
 data=data.drop(columns=['Type'])
 #app
