@@ -9,43 +9,32 @@ with open('star_model.pkl','rb') as file:
 data = pd.read_csv("data\stars.csv") 
 categorical_columns = ['Color', 'Spectral_Class']
 data=data.drop(columns=['Type'])
-#app
+
 def main():
     st.markdown("<h1 style='color: #8B0000;'>Star Type Prediction App</h1>", unsafe_allow_html=True)
 
-    # Sidebar for user input
     st.sidebar.header("User Input")
 
-    # Create a dictionary to store user input values
     user_input = {}
-
-    # Collect user input features
     for column in data.columns:
         if column != 'Type':
-            # Handle categorical columns differently
             if column in categorical_columns:
                 unique_values = data[column].unique()
                 selected_value = st.sidebar.selectbox(f"{column}:", unique_values)
                 user_input[column] = selected_value
             else:
                 user_input[column] = st.sidebar.text_input(f"{column}:", float(data[column].mean()))
-    # Create a DataFrame with user input features
     user_input_df = pd.DataFrame(user_input, index=[0])
-    #print(user_input_df)
-    # Add user input row to the dataset
     data_with_user_input = pd.concat([data, user_input_df], ignore_index=True)
-    #print(Counter(data_with_user_input['Spectral_Class']),Counter(data_with_user_input['Color']))
-    # Perform one-hot encoding for categorical columns
     data_with_user_input = pd.get_dummies(data_with_user_input, columns=categorical_columns)
     #print(data_with_user_input.columns)
     numerical_columns = [col for col in data_with_user_input.columns if col not in categorical_columns]
     scaler = StandardScaler()
     data_with_user_input[numerical_columns] = scaler.fit_transform(data_with_user_input[numerical_columns])
-    # Separate the user input row from the dataset
+   
     user_input_df = data_with_user_input.iloc[-1, :]
     data_with_user_input = data_with_user_input.iloc[:-1, :]
     #print(user_input_df)
-    # Make predictions
     prediction = model.predict(user_input_df.values.reshape(1, -1))
     print(user_input_df.values.reshape(1, -1),prediction)
     category_mapping = {
@@ -92,7 +81,7 @@ def main():
     }
 
     predicted_category = category_mapping[prediction[0]]
-    # Display the prediction
+   
     st.subheader("The predicted star type is:")
     st.write(f" {predicted_category}")
 
